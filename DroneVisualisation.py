@@ -108,7 +108,7 @@ def plotDrones2D(xs, ys, zs):
 
     # SVG format
     uav_path, attributes = parse_path('output.svg')
-    uav_marker = PathPatch(uav_path, color='grey', alpha=0.8, lw=0)
+    uav_marker = mpl.patches.PathPatch(uav_path, color='grey', alpha=0.8, lw=0)
     uav_marker.set_transform(ax.transData)
 
     ax.add_patch(uav_marker)
