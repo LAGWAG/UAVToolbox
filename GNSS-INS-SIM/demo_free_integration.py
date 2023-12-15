@@ -59,7 +59,7 @@ def test_free_integration():
     ini_pos_vel_att[6:9] += ini_att_err * D2R
     # create the algorith object
     algo1 = free_integration_odo.FreeIntegration(ini_pos_vel_att)
-    algo2 = free_integration.FreeIntegration(ini_pos_vel_att)
+    algo2 = free_integration.FreeIntegration(ini_pos_vel_att, 0)
 
     #### start simulation
     sim = ins_sim.Sim([fs, 0.0, 0.0],

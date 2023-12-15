@@ -1,64 +1,41 @@
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import numpy as np
 
-class UAV:
-    def __init__(self, start_position):
-        self.position = np.array(start_position, dtype=float)
-        self.waypoint = None
-        self.speed = 0.1  # Adjust the speed of the UAV
+# Define the number of points (n)
+n = 2
 
-    def set_waypoint(self, waypoint):
-        self.waypoint = np.array(waypoint, dtype=float)
+# Define the number of drones
+m = 3
 
-    def update_position(self):
-        if self.waypoint is not None:
-            direction = self.waypoint - self.position
-            distance = np.linalg.norm(direction)
-            if distance > self.speed:
-                # Normalize direction and move towards the waypoint
-                self.position += (direction / distance) * self.speed
-            else:
-                # Reached the waypoint
-                self.position = self.waypoint
-                self.waypoint = None
+# Generate four arrays of size n x 2 representing (x, y) points and put them into a list
+np.random.seed(10)
+point_list = [100*np.random.rand(m, 2) for _ in range(n)]
+print(point_list[0])
 
-# Create a UAV instance
-uav = UAV(start_position=(0, 0))
-
-# Set the waypoint for the UAV
-waypoint = (5, 5)
-uav.set_waypoint(waypoint)
-
-# Create the figure and axis
+# Create a scatter plot with no points initially
 fig, ax = plt.subplots()
-ax.set_xlim(-1, 6)
-ax.set_ylim(-1, 6)
+scatter = ax.scatter([], [], marker='o')
 
-# Create a point representing the UAV
-uav_point, = ax.plot([], [], 'ro', markersize=10)
+# Set the axis limits
+ax.set_xlim(0, 105)
+ax.set_ylim(0, 105)
 
-# Create a point representing the waypoint
-waypoint_point, = ax.plot([], [], 'bo', markersize=10)
+# Generate a list of unique colors for each point
+colors = ['b', 'g', 'r', 'y']
 
-# Create a static point at (5, 5)
-static_point, = ax.plot([], [], 'go', markersize=10)
-
-# Function to initialize the plot
-def init():
-    uav_point.set_data([], [])
-    waypoint_point.set_data(*waypoint)
-    static_point.set_data(*waypoint)  # Display the static point
-    return uav_point, waypoint_point, static_point
-
-# Function to update the plot in each frame
+# Update function for animation
 def update(frame):
-    uav.update_position()
-    uav_point.set_data([uav.position[0]], [uav.position[1]])  # Pass data as a list
-    return uav_point,
+    x_values = [point[frame % m, 0] for point in point_list]
+    y_values = [point[frame % m, 1] for point in point_list]
+    scatter.set_offsets(np.column_stack((x_values, y_values)))
+
+    # Assign a unique color to each point
+    scatter.set_color(colors[frame % len(colors)])
+    
+    return scatter,
 
 # Create the animation
-animation = FuncAnimation(fig, update, frames=range(100), init_func=init, blit=True)
+animation = FuncAnimation(fig, update, frames=n, interval=1000, blit=True)
 
-# Show the animation
 plt.show()

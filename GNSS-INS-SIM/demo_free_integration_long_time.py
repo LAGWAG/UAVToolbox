@@ -35,7 +35,7 @@ def test_free_integration():
                'mag_std': np.array([0.2, 0.2, 0.2]) * 0.0
               }
     # do not generate GPS and magnetometer data
-    imu = imu_model.IMU(accuracy=imu_err, axis=6, gps=False)
+    imu = imu_model.IMU(accuracy='med-accuracy', axis=6, gps=False)
 
     #### Algorithm
     # Free integration in a virtual inertial frame
@@ -60,7 +60,7 @@ def test_free_integration():
     #### start simulation
     sim = ins_sim.Sim([fs, 0.0, 0.0],
                       motion_def_path+"//motion_def-long_drive.csv",
-                      ref_frame=0,
+                      ref_frame=1,
                       imu=imu,
                       mode=None,
                       env=None,

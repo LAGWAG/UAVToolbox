@@ -86,13 +86,15 @@ def update(frame):
     # Plot the points
     scatter = ax.scatter(xValues, yValues, color='red', s=50)
     yValues[0] += 1
+    xValues[0] += 1
+    print(yValues[0])
 
     # Set the limits of the axes to keep the window the same
     ax.set_xlim(minX-10,maxX+10)
     ax.set_ylim(minY-10, maxY+10)
 
     # Copying from above
-    
+
     # Annotate distances between points
     for i in range(len(xValues)):
         for j in range(i + 1, len(xValues)):
@@ -104,8 +106,8 @@ def update(frame):
 
 
     scatter.set_offsets(np.column_stack((xValues, yValues)))
+    scatter = ax.scatter(xValues, yValues, color='red', s=50)
+    plt.show()
     return scatter,
 
 animation = animation.FuncAnimation(fig, update, frames=10, interval=1000, blit=True)
-
-plt.show()

@@ -23,10 +23,7 @@ def test_allan():
     '''
     An Allan analysis demo for Sim.
     '''
-    imu_err='mid-accuracy'
-    imu = imu_model.IMU(accuracy=imu_err, axis=6, gps=False)
-
-    # do not generate GPS and magnetometer data
+    imu_err='low-accuracy'
     imu = imu_model.IMU(accuracy=imu_err, axis=6, gps=False)
 
     fs = 100.0
