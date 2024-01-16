@@ -7,5 +7,5 @@ class Swarm:
         self.numberDrones=numberDrones
         self.delays=np.arange(numberDrones)
 
-swarm=Swarm(4)
+#swarm=Swarm(4)
         

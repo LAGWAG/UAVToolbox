@@ -1,48 +1,26 @@
-# -*- coding: utf-8 -*-
-# Filename: demo_allan.py
+import csv
+import matplotlib.pyplot as plt
 
-"""
-Test Sim with Allan analysis.
-Created on 2018-01-23
-@author: dongxiaoguang
-"""
+# Specify the path to your CSV file
+csv_file_path = 'pos_algo0_0.csv'
 
-import os
-import math
-import numpy as np
-from gnss_ins_sim.sim import imu_model
-from gnss_ins_sim.sim import ins_sim
+# Lists to store data from CSV columns
+column1_data = []
+column2_data = []
 
-# globals
-D2R = math.pi/180
+# Read data from CSV file
+with open(csv_file_path, 'r') as csv_file:
+    csv_reader = csv.reader(csv_file)
+    next(csv_reader)  # Skip the header if present
+    for row in csv_reader:
+        # Assuming the first two columns contain numeric data
+        column1_data.append(float(row[0]))
+        column2_data.append(float(row[1]))
 
-motion_def_path = os.path.abspath('.//demo_motion_def_files//')
-fs = 100.0          # IMU sample frequency
-
-def test_allan():
-    '''
-    An Allan analysis demo for Sim.
-    '''
-    imu_err='low-accuracy'
-    imu = imu_model.IMU(accuracy=imu_err, axis=6, gps=False)
-
-    fs = 100.0
-
-    #### Allan analysis algorithm
-    from demo_algorithms import allan_analysis
-    algo = allan_analysis.Allan()
-
-    #### start simulation
-    sim = ins_sim.Sim([fs, 0.0, 0.0], motion_def_path+"//motion_def-Allan.csv", ref_frame=1,
-                      imu=imu,
-                      mode=None,
-                      env=None,
-                      algorithm=algo)
-    sim.run()
-    # generate simulation results, summary, and save data to files
-    sim.results()  # save data files
-    # plot data
-    sim.plot(['ad_accel', 'ad_gyro'])
-
-if __name__ == '__main__':
-    test_allan()
+# Plotting the data
+plt.plot(column1_data, column2_data, marker='o', linestyle='-', color='b')
+plt.title('Plot of First Two Columns from CSV')
+plt.xlabel('Column 1')
+plt.ylabel('Column 2')
+plt.grid(True)
+plt.show()
