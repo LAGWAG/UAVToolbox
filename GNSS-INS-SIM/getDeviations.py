@@ -4,10 +4,11 @@ import math
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from demo_straightLine import *
 
-def getDeviations():
+def getCoordinates():
     # Run the IMU SIM
     test_free_integration()
 
@@ -41,8 +42,8 @@ def getDeviations():
 
 
     # Specify the paths to your CSV files
-    csv_file_path1 = 'pos_algo0_0_LLA.csv'
-    csv_file_path2 = 'ref_pos_LLA.csv'
+    csv_file_path1 = 'pos-algo0_0.csv'
+    csv_file_path2 = 'ref_pos.csv'
 
     # Lists to store data from CSV columns
     column1_data1, column2_data1 = [], []
@@ -64,8 +65,10 @@ def getDeviations():
             column1_data2.append(float(row[0]))
             column2_data2.append(float(row[1]))
     
-    truePosition=column2_data1,column1_data1
-    plannedPosition=column2_data2,column1_data2
+    truePosition=column1_data1,column2_data1
+    plannedPosition=column1_data2,column2_data2
+
+
 
     return truePosition, plannedPosition
 
@@ -73,14 +76,41 @@ def getDeviations():
 def collateData(numberDrones):
     coordinates=[]
     for i in range(numberDrones):
-        truepos, plannedpos=getDeviations()
+        truepos, plannedpos=getCoordinates()
         if (i < 1):
+            coordinates.append(plannedpos)
             coordinates.append(truepos)
-            coordinates.append(plannedpos)
         else:
-            coordinates.append(plannedpos)
+            coordinates.append(truepos)
         
-    arr=np.array(coordinates)
-    print(arr.shape)
-    
-collateData(4)
+    npCoordinates=np.array(coordinates)
+    print(npCoordinates.shape)
+
+    return npCoordinates # columns represent the time steps, depth[0] is planned position, others are true position
+
+numDrones=2
+
+def getDeviations(numDrones):
+
+    array=collateData(numDrones)
+
+    # array[Drone Number][longitude, latitude][time index]
+    deviations=np.transpose(np.subtract(array[1][:][:],array[0][:][:]))
+
+    for i in range(1, numDrones):
+        if (i<2):
+            deviations=np.stack([deviations, np.transpose(np.subtract(array[i+1][:][:],array[0][:][:]))], axis=-1)
+        else:
+            deviations=np.append([deviations, np.transpose(np.subtract(array[i+1][:][:],array[0][:][:]))], axis=2)
+
+    #writer = pd.ExcelWriter('newfile.xlsx')
+
+    #for i in range(numDrones):
+    #    df = pd.DataFrame(deviations[:,:,i])
+    #    df.to_excel(writer, sheet_name='bin%d' % i)
+
+    #writer.close()
+
+    #POSITIVE X IS POSITVE LATITUDE
+
+    return deviations
